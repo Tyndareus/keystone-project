@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
@@ -7,7 +8,7 @@ public class CharacterMovement : MonoBehaviour
         groundCheckRadius,
         jumpForce,
         slopeCheckDistance,
-        slopeAngleThreshold;
+        maxSlopeAngle;
 
     [SerializeField] private PhysicsMaterial2D fullFrictionSlope, noFrictionSlope;
     [SerializeField] private LayerMask groundLayer;
@@ -18,65 +19,64 @@ public class CharacterMovement : MonoBehaviour
     private Vector2 newVelocity, newForce, colliderSize, slopePerpendicular;
 
     private Rigidbody2D rb;
-    private BoxCollider2D col;
-
+    private CapsuleCollider2D col;
+    
     private Vector3 halfSize;
+
+    private int spriteDirection = 1;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<BoxCollider2D>();
-        
-        colliderSize = col.size;
+        col = GetComponent<CapsuleCollider2D>();
 
-        halfSize = new Vector3(0.0f, colliderSize.y / 2f, 0.0f);
+        halfSize = new Vector2(0.0f, col.size.y / 2f);
     }
 
     private void Update()
     {
-        ProcessInput();
+        CheckInput();     
     }
 
     private void FixedUpdate()
     {
-        GroundCheck();
+        CheckGround();
         SlopeCheck();
-        ProcessMovement();
+        ApplyMovement();
     }
 
-    private void ProcessInput()
+    private void CheckInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
+
+        switch (horizontalInput)
+        {
+            case 1 when spriteDirection == -1:
+                spriteDirection *= -1;
+                transform.Rotate(0.0f, 180.0f, 0.0f);
+                break;
+            case -1 when spriteDirection == 1:
+                spriteDirection *= -1;
+                transform.Rotate(0.0f, 180.0f, 0.0f);
+                break;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
     }
-
-    private void Jump()
+    
+    private void CheckGround()
     {
-        if (!canJump) return;
-        
-        canJump = false;
-        isJumping = true;
-        newVelocity.Set(0.0f, 0.0f);
-        rb.velocity = newVelocity;
-        newForce.Set(0.0f, jumpForce);
-        rb.AddForce(newForce, ForceMode2D.Impulse);
-    }
+        isGrounded = Physics2D.OverlapCircle(col.bounds.center - (halfSize / 2f), groundCheckRadius, groundLayer);
 
-    private void GroundCheck()
-    {
-        isGrounded = Physics2D.OverlapCircle(transform.position - halfSize, groundCheckRadius, groundLayer);
-        Debug.Log(isGrounded);
-        
-        if (rb.velocity.y <= 0.0f)
+        if(rb.velocity.y <= 0.0f)
         {
             isJumping = false;
         }
 
-        if (isGrounded && !isJumping && slopeDownAngle <= slopeAngleThreshold)
+        if(isGrounded && !isJumping && slopeDownAngle <= maxSlopeAngle)
         {
             canJump = true;
         }
@@ -85,6 +85,7 @@ public class CharacterMovement : MonoBehaviour
     private void SlopeCheck()
     {
         Vector2 checkPos = transform.position - halfSize;
+
         SlopeCheckHorizontal(checkPos);
         SlopeCheckVertical(checkPos);
     }
@@ -99,7 +100,7 @@ public class CharacterMovement : MonoBehaviour
             onSlope = true;
             slopeSideAngle = Vector2.Angle(slopeHitFront.normal, Vector2.up);
         }
-        else if(slopeHitBack)
+        else if (slopeHitBack)
         {
             onSlope = true;
             slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);
@@ -112,26 +113,27 @@ public class CharacterMovement : MonoBehaviour
     }
 
     private void SlopeCheckVertical(Vector2 checkPos)
-    {
+    {      
         RaycastHit2D hit = Physics2D.Raycast(checkPos, Vector2.down, slopeCheckDistance, groundLayer);
 
         if (hit)
         {
-            slopePerpendicular = Vector2.Perpendicular(hit.normal).normalized;
+            slopePerpendicular = Vector2.Perpendicular(hit.normal).normalized;            
+
             slopeDownAngle = Vector2.Angle(hit.normal, Vector2.up);
 
-            if (slopeDownAngle != lastSlopeAngle)
+            if(slopeDownAngle != lastSlopeAngle)
             {
                 onSlope = true;
-            }
+            }                       
 
             lastSlopeAngle = slopeDownAngle;
             
-            Debug.DrawRay(hit.point, slopePerpendicular, Color.blue);
-            Debug.DrawRay(hit.point, hit.normal, Color.gray);
+            Debug.DrawRay(hit.point, hit.normal, Color.green);
+            Debug.DrawRay(hit.point, slopePerpendicular, Color.red);
         }
 
-        if (slopeDownAngle > slopeAngleThreshold || slopeSideAngle > slopeAngleThreshold)
+        if (slopeDownAngle > maxSlopeAngle || slopeSideAngle > maxSlopeAngle)
         {
             canWalkOnSlope = false;
         }
@@ -150,24 +152,42 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-    private void ProcessMovement()
+    private void Jump()
     {
-        switch (isGrounded)
+        if (!canJump) return;
+        
+        canJump = false;
+        isJumping = true;
+        newVelocity.Set(0.0f, 0.0f);
+        rb.velocity = newVelocity;
+        newForce.Set(0.0f, jumpForce);
+        rb.AddForce(newForce, ForceMode2D.Impulse);
+    }   
+
+    private void ApplyMovement()
+    {
+        if (isGrounded && !onSlope && !isJumping) //if not on slope
         {
-            case true when !onSlope && !isJumping:
-                newVelocity.Set(movementSpeed * horizontalInput, 0.0f);
-                rb.velocity = newVelocity;
-                Debug.Log("Simple move");
-                break;
-            case true when onSlope && canWalkOnSlope && !isJumping:
-                newVelocity.Set(movementSpeed * slopePerpendicular.x * -horizontalInput,
-                    movementSpeed * slopePerpendicular.y * -horizontalInput);
-                rb.velocity = newVelocity;
-                break;
-            case false:
-                newVelocity.Set(movementSpeed * horizontalInput, rb.velocity.y);
-                rb.velocity = newVelocity;
-                break;
+            newVelocity.Set(movementSpeed * horizontalInput, 0.0f);
+            rb.velocity = newVelocity;
         }
+        else if (isGrounded && onSlope && canWalkOnSlope && !isJumping) //If on slope
+        {
+            newVelocity.Set(movementSpeed * slopePerpendicular.x * -horizontalInput, movementSpeed * slopePerpendicular.y * -horizontalInput);
+            rb.velocity = newVelocity;
+        }
+        else if (!isGrounded) //If in air
+        {
+            newVelocity.Set(movementSpeed * horizontalInput, rb.velocity.y);
+            rb.velocity = newVelocity;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        CapsuleCollider2D bb = GetComponent<CapsuleCollider2D>();
+
+        Vector3 size = new Vector2(0.0f, (bb.size.y / 2f) / 2f);
+        Gizmos.DrawWireSphere(bb.bounds.center - size, groundCheckRadius);
     }
 }

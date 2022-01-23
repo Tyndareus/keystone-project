@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
@@ -14,12 +11,15 @@ public class CameraMovement : MonoBehaviour
     
     private void LateUpdate()
     {
-        float xPos = playerTransform.position.x;
+        Vector3 camPos = transform.position;
+        
+        Vector3 playerPos = playerTransform.position;
+        float xPos = playerPos.x;
         xPos = Mathf.Clamp(xPos, xMinBorder, xMaxBorder);
 
-        float yPos = playerTransform.position.y;
+        float yPos = playerPos.y;
         yPos = Mathf.Clamp(yPos, yMinBorder, yMaxBorder);
-        
-        transform.position = new Vector3(xPos, yPos, transform.position.z);
+
+        transform.position = new Vector3(xPos, yPos, camPos.z);
     }
 }
