@@ -1,15 +1,13 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField, SceneSelector] private int sceneIndex;
-
+    [SerializeField] private LevelManager levelManager;
     [SerializeField] private GameObject mainMenuButtons;
     [SerializeField] private GameObject optionMenu;
-    
-    public void OnPlayClick() => SceneManager.LoadScene(sceneIndex);
+
+    public void OnPlayClick() => levelManager.LoadFirstScene();
 
     public void OnQuitClick()
     {
