@@ -17,7 +17,7 @@ public class CardManager : MonoBehaviour
     
     private void Start()
     {
-        playerSelection = new List<Card>(PlayerDataManager.Instance.maxPlayerCount);
+        playerSelection = new List<Card>(PlayerDataManager.Instance.playerCount);
         RandomiseCards();
 
         StartCoroutine(PaintAndDisplay());
