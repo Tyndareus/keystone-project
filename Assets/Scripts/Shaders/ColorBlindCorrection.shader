@@ -29,7 +29,6 @@ Shader "Hidden/Custom/ColorBlindCorrection"
         half4 FragDeuteranomaly(VaryingsDefault i) : SV_Target
         {
             half4 input = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
-
             return half4(
                 input.r * 0.8 + input.g * 0.2,
                 input.r * 0.258 + input.g * 0.742,
@@ -72,7 +71,7 @@ Shader "Hidden/Custom/ColorBlindCorrection"
         {
             half4 input = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
             float a = input.a;
-            input = dot(input.rgb, float3(0.3, 0.59, 0.11));
+            input = dot(input.rgb, half3(0.3, 0.59, 0.11));
             return half4(input.rgb, a);
         }
 

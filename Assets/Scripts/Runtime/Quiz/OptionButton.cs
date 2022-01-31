@@ -1,10 +1,9 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class OptionButton : Selectable, IPointerClickHandler, ISubmitHandler
+public class OptionButton : Selectable
 {
     public QuizManager quizManager;
     private string option;
@@ -36,17 +35,9 @@ public class OptionButton : Selectable, IPointerClickHandler, ISubmitHandler
         optionText.text = option;
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void Submit(int playerIndex)
     {
-        quizManager.OnOptionSelected(optionIndex);
-
-        DoStateTransition(SelectionState.Pressed, false);
-        StartCoroutine(OnFinishSubmit());
-    }
-
-    public void OnSubmit(BaseEventData eventData)
-    {
-        quizManager.OnOptionSelected(optionIndex);
+        quizManager.OnOptionSelected(playerIndex, optionIndex);
         DoStateTransition(SelectionState.Pressed, false);
         StartCoroutine(OnFinishSubmit());
     }

@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,29 +15,40 @@ public class QuizManager : MonoBehaviour
     
     private QuizData.QuestionData currentQuestion;
 
+    private List<QuizData.OptionData> playerSelection;
+
     private void Start()
     {
+        playerSelection = new List<QuizData.OptionData>(PlayerDataManager.Instance.playerCount);
         quizSelection.RandomiseQuestions();
         currentQuestion = quizSelection.questionList.Dequeue();
 
         UpdateDisplay();
     }
 
-    public void OnOptionSelected(int option)
+    public void OnOptionSelected(int player, int option)
     {
         if (currentQuestion == null) return;
-        
-        if (currentQuestion.options[option].correctAnswer)
+
+        playerSelection[player] = currentQuestion.options[option];
+
+        if (playerSelection.Count(p => p != null) >= PlayerDataManager.Instance.playerCount)
         {
-            optionContainer.GetChild(option).GetComponent<Image>().color = Color.green;
-
+            ValidateOptions();
             currentQuestion = null;
-
             StartCoroutine(SelectNextQuestion());
         }
-        else
+    }
+
+    private void ValidateOptions()
+    {
+        for(int i = 0; i < playerSelection.Count; i++)
         {
-            optionContainer.GetChild(option).GetComponent<Image>().color = Color.red;
+            if (playerSelection[i].correctAnswer)
+            {
+                Debug.Log($"Player {i + 1} is correct");
+                //TODO: Outline portrait?
+            }
         }
     }
 
