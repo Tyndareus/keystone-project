@@ -43,3 +43,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: background layer
+    uniqueID: 2733775009
+    locked: 0
+  - name: mid ground layer
+    uniqueID: 2242383673
+    locked: 0
+  - name: crowd forground layer
+    uniqueID: 1279693611
+    locked: 0
+  - name: UI layer
+    uniqueID: 1840377475
+    locked: 0
