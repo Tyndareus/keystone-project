@@ -18,11 +18,13 @@ public class LevelManager : Singleton<LevelManager>
 
     public void LoadNextScene()
     {
-        if (SceneData.currentScene + 1 >= sceneData.sceneOrder.Count) return;
+        if (SceneData.currentScene > sceneData.sceneOrder.Count - 1)
+        {
+            SceneManager.LoadScene(sceneData.finalScene.scene);
+            return;
+        }
 
         currentScene = sceneData.sceneOrder[SceneData.currentScene++];
         SceneManager.LoadScene(currentScene.scene);
     }
-
-    public SceneObject GetScene() => currentScene;
 }
