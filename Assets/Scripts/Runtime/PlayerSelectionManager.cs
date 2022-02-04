@@ -1,17 +1,21 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PlayerSelectionManager : MonoBehaviour
 {
     [SerializeField] private PlayerInputManager inputManager;
     [SerializeField] private GameObject playerUIInput;
-    [FormerlySerializedAs("characterParent")] [SerializeField] private Transform selectableParent;
-    [SerializeField] private GameObject playerCaret;
+    [SerializeField] private GraphicRaycaster graphicRaycaster;
+    [SerializeField] private Transform selectableParent;
+    [SerializeField] private Transform idlePlayerSpawn;
+    [SerializeField] private FadeManager fadeManager;
     
-    [SerializeField] private Transform playerCaretParent;
+    
+    [SerializeField] private UnityEvent onCharacterSelected;
+    
 
     private void Start()
     {
@@ -22,13 +26,20 @@ public class PlayerSelectionManager : MonoBehaviour
             
             inputManager.JoinPlayer();
         }
+
+        fadeManager.FadeIn();
     }
 
     public void OnPlayerJoined(PlayerInput pInput)
     {
         GameObject playerUI = Instantiate(playerUIInput);
         MultiplayerEventSystem mes = playerUI.GetComponent<MultiplayerEventSystem>();
-        mes.firstSelectedGameObject = selectableParent.GetChild(0).gameObject;
+
+        if (selectableParent.childCount > 0)
+        {
+            mes.firstSelectedGameObject = selectableParent.GetChild(0).gameObject;
+        }
+
         mes.playerRoot = selectableParent.gameObject;
         
         PlayerDataManager.Instance.RegisterPlayer(pInput.playerIndex);
@@ -37,19 +48,21 @@ public class PlayerSelectionManager : MonoBehaviour
         pInput.uiInputModule = module;
         pInput.SwitchCurrentActionMap("UI");
 
-        GameObject caret = Instantiate(playerCaret, playerCaretParent);
-        
-        //TEMP
-        switch (pInput.playerIndex)
-        {
-            case 0: caret.GetComponent<Image>().color = Color.red; break;
-            case 1: caret.GetComponent<Image>().color = Color.cyan; break;
-            case 2: caret.GetComponent<Image>().color = Color.green; break;
-            case 3: caret.GetComponent<Image>().color = Color.yellow; break;
-        }
-
         UIPlayerController uiController = pInput.GetComponent<UIPlayerController>();
-        uiController.playerOutlineObject = caret;
         uiController.playerEventSystem = mes;
+        uiController.uiRaycaster = graphicRaycaster;
+        
+        uiController.DisableInput();
+
+        if (idlePlayerSpawn == null) return;
+        
+        GameObject idleCharacter = PlayerDataManager.Instance.GetPlayerCharacter(pInput.playerIndex, true);
+        Instantiate(idleCharacter, idlePlayerSpawn);
+    }
+
+    public void SelectCharacter(int playerIndex, int charIndex, Vector3 scale)
+    {
+        onCharacterSelected?.Invoke();
+        PlayerDataManager.Instance.OnCharacterSelected(playerIndex, charIndex, scale);
     }
 }
