@@ -6,9 +6,9 @@ public class WorldPlayerManager : MonoBehaviour
 {
     [SerializeField] private PlayerInputManager inputManager;
     [SerializeField] private Transform characterSpawn;
-    [SerializeField] private LayerMask safeLayer;
 
     private List<PlayerInput> currentPlayers;
+    private static readonly int Selected = Animator.StringToHash("Selected");
 
     private void Awake()
     {
@@ -27,13 +27,17 @@ public class WorldPlayerManager : MonoBehaviour
 
     public void OnPlayerJoined(PlayerInput pInput)
     {
-        SpriteRenderer sr = pInput.gameObject.GetComponent<SpriteRenderer>();
         PlayerData pd = PlayerDataManager.Instance.SelectPlayer(pInput.playerIndex);
 
-        sr.sprite = pd.characterSprite;
+        GameObject player = Instantiate(pd.character, pInput.transform, false);
+        player.transform.position = new Vector3(0.0f, -0.5f, 0.0f);
+        player.transform.localScale = pd.characterScale;
+
         pInput.transform.SetParent(characterSpawn, false);
 
         currentPlayers.Add(pInput);
+        
+        player.GetComponentInChildren<Animator>().SetBool(Selected, true);
     }
 
     public void AllowPlayerToMove(int player)
