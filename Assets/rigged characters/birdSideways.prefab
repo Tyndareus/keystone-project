@@ -84,7 +84,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -225,7 +225,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -273,8 +273,8 @@ MonoBehaviour:
   m_BoneTransforms:
   - {fileID: 3157930368231630522}
   m_Bounds:
-    m_Center: {x: 0.36390758, y: -0.105532885, z: 0}
-    m_Extent: {x: 1.5697122, y: 3.0516083, z: 0}
+    m_Center: {x: 0.36390376, y: -0.105532885, z: 0}
+    m_Extent: {x: 1.5697122, y: 3.051608, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
@@ -363,7 +363,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -414,8 +414,8 @@ MonoBehaviour:
   - {fileID: 4932111793376278085}
   - {fileID: 4107424136943396735}
   m_Bounds:
-    m_Center: {x: 0.0009522438, y: -0.07235575, z: 0}
-    m_Extent: {x: 5.630953, y: 5.809344, z: 0}
+    m_Center: {x: 0.0009522438, y: -0.07235527, z: 0}
+    m_Extent: {x: 5.630953, y: 5.8093433, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
@@ -504,7 +504,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -908,7 +908,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1110,7 +1110,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1343,7 +1343,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1391,7 +1391,7 @@ MonoBehaviour:
   m_BoneTransforms:
   - {fileID: 8689971015820120875}
   m_Bounds:
-    m_Center: {x: 0.22353661, y: -0.04770875, z: 0}
+    m_Center: {x: 0.22353661, y: -0.047709703, z: 0}
     m_Extent: {x: 1.2922672, y: 3.1036544, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
@@ -1514,7 +1514,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1651,7 +1651,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c9686a772513f944084c0a946df0494f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1699,7 +1699,7 @@ MonoBehaviour:
   m_BoneTransforms:
   - {fileID: 2178714236391820753}
   m_Bounds:
-    m_Center: {x: 0, y: -0.000000834465, z: 0}
+    m_Center: {x: 0, y: 0.000002026558, z: 0}
     m_Extent: {x: 2.4100003, y: 0.8700001, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
