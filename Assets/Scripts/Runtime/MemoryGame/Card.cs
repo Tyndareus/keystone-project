@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +12,11 @@ public class Card : Selectable
 
     private float cardRotationSpeed;
 
+    private Image[] childImages;
+
     protected override void Awake()
     {
+        childImages = GetComponentsInChildren<Image>();
         Toggle(false);
     }
 
@@ -26,11 +30,11 @@ public class Card : Selectable
 
     public void Submit(int playerIndex) => cardManager.Select(playerIndex, this);
 
-    public void Toggle(bool interactable, bool matched = false)
+    public void Toggle(bool canInteract, bool matched = false)
     {
-        foreach (Image img in GetComponentsInChildren<Image>())
+        foreach (Image img in childImages)
         {
-            img.raycastTarget = interactable;
+            img.raycastTarget = canInteract;
 
             if (matched)
             {
@@ -41,6 +45,7 @@ public class Card : Selectable
 
     public void Display() => StartCoroutine(RotateCard(new Vector3(0, 180, 0)));
     public void Hide() => StartCoroutine(RotateCard(new Vector3(0, 0, 0)));
+    public bool HasBeenCompleted() => childImages.All(img => !img.raycastTarget);
 
     private IEnumerator RotateCard(Vector3 rotation)
     {
