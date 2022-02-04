@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 public class QuizManager : MonoBehaviour
@@ -12,24 +12,29 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private TMP_Text question;
     [SerializeField] private GameObject optionPrefab;
     [SerializeField] private Transform optionContainer;
-    
+    [SerializeField] private FadeManager fadeManager;
+
     private QuizData.QuestionData currentQuestion;
 
-    private List<QuizData.OptionData> playerSelection;
+    private QuizData.OptionData[] playerSelection;
 
     private void Start()
     {
-        playerSelection = new List<QuizData.OptionData>(PlayerDataManager.Instance.playerCount);
+        playerSelection = new QuizData.OptionData[PlayerDataManager.Instance.playerCount];
         quizSelection.RandomiseQuestions();
         currentQuestion = quizSelection.questionList.Dequeue();
-
         UpdateDisplay();
+    }
+
+    public void OnFadeIn()
+    {
+        StartCoroutine(EnableInput());
     }
 
     public void OnOptionSelected(int player, int option)
     {
         if (currentQuestion == null) return;
-
+        
         playerSelection[player] = currentQuestion.options[option];
 
         if (playerSelection.Count(p => p != null) >= PlayerDataManager.Instance.playerCount)
@@ -42,13 +47,15 @@ public class QuizManager : MonoBehaviour
 
     private void ValidateOptions()
     {
-        for(int i = 0; i < playerSelection.Count; i++)
+        for(int i = 0; i < playerSelection.Length; i++)
         {
             if (playerSelection[i].correctAnswer)
             {
-                Debug.Log($"Player {i + 1} is correct");
                 //TODO: Outline portrait?
+                Debug.Log($"Player {i + 1} is correct");
             }
+
+            playerSelection[i] = null;
         }
     }
 
@@ -56,13 +63,19 @@ public class QuizManager : MonoBehaviour
     {
         question.text = currentQuestion.question;
 
+        //Adds new options
         if (currentQuestion.options.Count > optionContainer.childCount ||
             currentQuestion.options.Count < optionContainer.childCount)
         {
+            for (int i = optionContainer.childCount - 1; i >= 0; i--)
+            {
+                DestroyImmediate(optionContainer.GetChild(i));
+            }
+
             for (int i = 0; i < currentQuestion.options.Count; i++)
             {
                 GameObject option = Instantiate(optionPrefab, optionContainer);
-                OptionButton optButton = option.AddComponent<OptionButton>();
+                OptionButton optButton = option.GetComponent<OptionButton>();
                 optButton.UpdateOption(currentQuestion.options[i].text, i);
                 optButton.quizManager = this;
             }
@@ -77,6 +90,12 @@ public class QuizManager : MonoBehaviour
                 optButton.UpdateOption(currentQuestion.options[i].text, i);
                 optButton.quizManager = this;
             }
+        }
+
+        var mes = FindObjectsOfType<MultiplayerEventSystem>();
+        foreach (var m in mes)
+        {
+            m.firstSelectedGameObject = optionContainer.GetChild(0).gameObject;
         }
     }
 
@@ -98,7 +117,7 @@ public class QuizManager : MonoBehaviour
         }
         else
         {
-            gameObject.SetActive(false);
+            fadeManager.FadeOut();
         }
     }
 
@@ -112,5 +131,20 @@ public class QuizManager : MonoBehaviour
 
             opt.interactable = value;
         }
+    }
+
+    private IEnumerator EnableInput()
+    {
+        for (float t = 0.0f; t <= 1.5f; t += Time.deltaTime) yield return null;
+        
+        foreach (var uiPlayer in FindObjectsOfType<UIPlayerController>())
+        {
+            uiPlayer.EnableInput();
+        }
+    }
+
+    public void OnFadeOut()
+    {
+        LevelManager.Instance.LoadNextScene();
     }
 }
