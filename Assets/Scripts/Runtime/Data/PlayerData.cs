@@ -4,7 +4,8 @@ using UnityEngine;
 public class PlayerData : ScriptableObject
 {
     public int playerIndex;
-    public Color color;
-    public Sprite characterSprite;
+    public GameObject character;
+    public GameObject idleCharacter;
     public int points;
+    public Vector3 characterScale;
 }
