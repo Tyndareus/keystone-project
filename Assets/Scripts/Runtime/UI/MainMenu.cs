@@ -1,13 +1,23 @@
+using System.Collections;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private LevelManager levelManager;
     [SerializeField] private GameObject mainMenuButtons;
     [SerializeField] private GameObject optionMenu;
+    [SerializeField] private FadeManager fadeManager;
 
-    public void OnPlayClick() => levelManager.LoadFirstScene();
+    public void OnPlayClick()
+    {
+        foreach (var button in mainMenuButtons.GetComponentsInChildren<Button>())
+        {
+            button.interactable = false;
+        }
+
+        fadeManager.FadeOut();
+    }
 
     public void OnQuitClick()
     {
@@ -28,5 +38,10 @@ public class MainMenu : MonoBehaviour
     {
         optionMenu.SetActive(false);
         mainMenuButtons.SetActive(true);
+    }
+
+    public void OnFadeOut()
+    {
+        LevelManager.Instance.LoadFirstScene();
     }
 }
