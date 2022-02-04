@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TimerManager : MonoBehaviour
 {
@@ -8,27 +10,35 @@ public class TimerManager : MonoBehaviour
 
     [SerializeField] private float countdownTimer;
     [SerializeField] private float gameTimer;
+    [SerializeField] private TMP_Text timerText;
+    [SerializeField] private FadeManager fadeManager;
+
+    [SerializeField] private UnityEvent onGameStart;
     
-    
-    private float timer;
+    private TimeSpan timer;
 
     private void Start()
     {
-        StartCoroutine(BeginCountdown());
+        timer = TimeSpan.FromSeconds(gameTimer);
+        timerText.text = $"Time: {timer.Minutes:D2}:{timer.Seconds:D2}:{timer.Milliseconds:D2}";
+        fadeManager.FadeIn();
     }
+
+    public void OnFadeIn() => StartCoroutine(BeginCountdown());
 
     private void Update()
     {
-        if (InPlay)
-        {
-            timer += Time.deltaTime;
+        if (!InPlay) return;
+        
+        timer -= TimeSpan.FromSeconds(Time.deltaTime);
 
-            if (timer >= gameTimer)
-            {
-                Debug.Log("Game Finished");
-                InPlay = false;
-            }
+        if (timer.TotalSeconds <= 0)
+        {
+            InPlay = false;
+            fadeManager.FadeOut();
         }
+
+        timerText.text = $"Time: {timer.Minutes:D2}:{timer.Seconds:D2}:{timer.Milliseconds:D2}";
     }
 
     private IEnumerator BeginCountdown()
@@ -40,6 +50,15 @@ public class TimerManager : MonoBehaviour
         }
 
         InPlay = true;
-        FindObjectOfType<ObjectSpawner>().BeginSpawning();
+        onGameStart?.Invoke();
     }
+
+    public void ReduceTime(float time)
+    {
+        if (!InPlay) return;
+
+        timer -= TimeSpan.FromSeconds(time);
+    }
+
+    public void OnFadeOut() => LevelManager.Instance.LoadNextScene();
 }
