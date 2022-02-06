@@ -13,6 +13,9 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private GameObject optionPrefab;
     [SerializeField] private Transform optionContainer;
     [SerializeField] private FadeManager fadeManager;
+    [SerializeField] private CanvasGroup questionGroup;
+    [SerializeField] private ScoreManager scoreManager;
+    [SerializeField] private AudioSource resultAudio;
 
     private QuizData.QuestionData currentQuestion;
 
@@ -26,9 +29,9 @@ public class QuizManager : MonoBehaviour
         UpdateDisplay();
     }
 
-    public void OnFadeIn()
+    public void OnGameStart()
     {
-        StartCoroutine(EnableInput());
+        StartCoroutine(FadeInQuestions());
     }
 
     public void OnOptionSelected(int player, int option)
@@ -47,15 +50,22 @@ public class QuizManager : MonoBehaviour
 
     private void ValidateOptions()
     {
-        for(int i = 0; i < playerSelection.Length; i++)
+        if (playerSelection[0].correctAnswer)
         {
-            if (playerSelection[i].correctAnswer)
-            {
-                //TODO: Outline portrait?
-                Debug.Log($"Player {i + 1} is correct");
-            }
+            scoreManager.TryScore(true);
+        }
+        else
+        {
+            resultAudio.Play();
+        }
 
-            playerSelection[i] = null;
+        playerSelection[0] = null;
+
+        for (int i = 0; i < currentQuestion.options.Count; i++)
+        {
+            Transform child = optionContainer.GetChild(i);
+            OptionButton btn = child.GetComponentInChildren<OptionButton>();
+            btn.targetGraphic.color = currentQuestion.options[i].correctAnswer ? Color.green : Color.red;
         }
     }
 
@@ -76,7 +86,7 @@ public class QuizManager : MonoBehaviour
             {
                 GameObject option = Instantiate(optionPrefab, optionContainer);
                 OptionButton optButton = option.GetComponent<OptionButton>();
-                optButton.UpdateOption(currentQuestion.options[i].text, i);
+                optButton.UpdateOption(currentQuestion.options[i], i);
                 optButton.quizManager = this;
             }
         }
@@ -85,9 +95,9 @@ public class QuizManager : MonoBehaviour
             for (int i = 0; i < currentQuestion.options.Count; i++)
             {
                 Transform child = optionContainer.GetChild(i);
-                child.GetComponent<Image>().color = Color.white;
                 OptionButton optButton = child.GetComponent<OptionButton>();
-                optButton.UpdateOption(currentQuestion.options[i].text, i);
+                optButton.targetGraphic.color = Color.white;
+                optButton.UpdateOption(currentQuestion.options[i], i);
                 optButton.quizManager = this;
             }
         }
@@ -108,6 +118,11 @@ public class QuizManager : MonoBehaviour
             yield return null;
         }
 
+        for (int i = 0; i < optionContainer.childCount; i++)
+        {
+            optionContainer.GetChild(i).GetComponentInChildren<OptionButton>().targetGraphic.color = Color.white;
+        }
+
         if (quizSelection.questionList.Count > 0)
         {
             currentQuestion = quizSelection.questionList.Dequeue();
@@ -117,7 +132,7 @@ public class QuizManager : MonoBehaviour
         }
         else
         {
-            fadeManager.FadeOut();
+            StartCoroutine(GoForFade());
         }
     }
 
@@ -133,18 +148,24 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    private IEnumerator EnableInput()
+    private IEnumerator GoForFade()
     {
-        for (float t = 0.0f; t <= 1.5f; t += Time.deltaTime) yield return null;
+        FindObjectOfType<AudioManager>().OnGameComplete();
         
-        foreach (var uiPlayer in FindObjectsOfType<UIPlayerController>())
-        {
-            uiPlayer.EnableInput();
-        }
+        for (float t = 0.0f; t <= 5.0f; t += Time.deltaTime) yield return null;
+
+        fadeManager.FadeOut();
     }
 
-    public void OnFadeOut()
+    private IEnumerator FadeInQuestions()
     {
-        LevelManager.Instance.LoadNextScene();
+        for (float t = 0.0f; t <= 1.25f; t += Time.deltaTime)
+        {
+            questionGroup.alpha = Mathf.Lerp(0.0f, 1.0f, 1 / 1.0f);
+            yield return null;
+        }
+
+        questionGroup.interactable = true;
+        questionGroup.blocksRaycasts = true;
     }
 }

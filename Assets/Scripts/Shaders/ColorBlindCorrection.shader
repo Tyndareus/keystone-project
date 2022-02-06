@@ -6,16 +6,6 @@ Shader "Hidden/Custom/ColorBlindCorrection"
 
         TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);
 
-        half4 FragProtanomaly(VaryingsDefault i) : SV_Target
-        {
-            half4 input = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
-            return half4(
-                input.r * 0.817 + input.g * 0.183,
-                input.r * 0.333 + input.g * 0.667,
-                input.g * 0.125 + input.b * 0.875,
-                input.a);
-        }
-
         half4 FragProtanopia(VaryingsDefault i) : SV_Target
         {
             half4 input = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
@@ -23,16 +13,6 @@ Shader "Hidden/Custom/ColorBlindCorrection"
                 input.r * 0.567 + input.g * 0.433,
                 input.r * 0.558 + input.g * 0.442,
                 input.g * 0.242 + input.b * 0.758,
-                input.a);
-        }
-
-        half4 FragDeuteranomaly(VaryingsDefault i) : SV_Target
-        {
-            half4 input = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
-            return half4(
-                input.r * 0.8 + input.g * 0.2,
-                input.r * 0.258 + input.g * 0.742,
-                input.g * 0.142 + input.b * 0.858,
                 input.a);
         }
 
@@ -44,16 +24,6 @@ Shader "Hidden/Custom/ColorBlindCorrection"
                 input.r * 0.625 + input.g * 0.375,
                 input.r * 0.7 + commonGreen,
                 commonGreen + input.b * 0.7,
-                input.a);
-        }
-
-        half4 FragTritanomaly(VaryingsDefault i) : SV_Target
-        {
-            half4 input = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
-            return half4(
-                input.r * 0.967 + input.g * 0.033,
-                input.g * 0.733 + input.b * 0.267,
-                input.g * 0.183 + input.b * 0.817,
                 input.a);
         }
 
@@ -85,26 +55,10 @@ Shader "Hidden/Custom/ColorBlindCorrection"
         {
             HLSLPROGRAM
                 #pragma vertex VertDefault
-                #pragma fragment FragProtanomaly
-            ENDHLSL
-        }
-
-        Pass
-        {
-            HLSLPROGRAM
-                #pragma vertex VertDefault
                 #pragma fragment FragProtanopia
             ENDHLSL
         }
         
-        Pass
-        {
-            HLSLPROGRAM
-                #pragma vertex VertDefault
-                #pragma fragment FragDeuteranomaly
-            ENDHLSL
-        }
-
         Pass
         {
             HLSLPROGRAM
@@ -118,14 +72,6 @@ Shader "Hidden/Custom/ColorBlindCorrection"
             HLSLPROGRAM
                 #pragma vertex VertDefault
                 #pragma fragment FragTritanopia
-            ENDHLSL
-        }
-        
-        Pass
-        {
-            HLSLPROGRAM
-                #pragma vertex VertDefault
-                #pragma fragment FragTritanomaly
             ENDHLSL
         }
         

@@ -15,4 +15,10 @@ public class ConveyorBeltSpeedManager : MonoBehaviour
     {
         conveyorBeltAnimator.speed = Mathf.Abs(surfaceEffector.speed) - offset;
     }
+
+    public void OnScore()
+    {
+        surfaceEffector.speed -= 0.2f;
+        conveyorBeltAnimator.speed = Mathf.Abs(surfaceEffector.speed) - offset;
+    }
 }

@@ -22,4 +22,6 @@ public class ObjectSpawner : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenSpawns);
         }
     }
+
+    public void OnScore() => timeBetweenSpawns = Mathf.Clamp(timeBetweenSpawns - 0.15f, 0.0f, 4f);
 }

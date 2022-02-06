@@ -11,11 +11,7 @@ public class PlayerSelectionManager : MonoBehaviour
     [SerializeField] private GraphicRaycaster graphicRaycaster;
     [SerializeField] private Transform selectableParent;
     [SerializeField] private Transform idlePlayerSpawn;
-    [SerializeField] private FadeManager fadeManager;
-    
-    
     [SerializeField] private UnityEvent onCharacterSelected;
-    
 
     private void Start()
     {
@@ -26,8 +22,6 @@ public class PlayerSelectionManager : MonoBehaviour
             
             inputManager.JoinPlayer();
         }
-
-        fadeManager.FadeIn();
     }
 
     public void OnPlayerJoined(PlayerInput pInput)
@@ -51,18 +45,17 @@ public class PlayerSelectionManager : MonoBehaviour
         UIPlayerController uiController = pInput.GetComponent<UIPlayerController>();
         uiController.playerEventSystem = mes;
         uiController.uiRaycaster = graphicRaycaster;
-        
-        uiController.DisableInput();
 
         if (idlePlayerSpawn == null) return;
         
         GameObject idleCharacter = PlayerDataManager.Instance.GetPlayerCharacter(pInput.playerIndex, true);
-        Instantiate(idleCharacter, idlePlayerSpawn);
+        GameObject spawnedCharacter = Instantiate(idleCharacter, idlePlayerSpawn);
+        spawnedCharacter.transform.localScale /= 10.0f;
     }
 
-    public void SelectCharacter(int playerIndex, int charIndex, Vector3 scale)
+    public void SelectCharacter(int playerIndex, int charIndex)
     {
         onCharacterSelected?.Invoke();
-        PlayerDataManager.Instance.OnCharacterSelected(playerIndex, charIndex, scale);
+        PlayerDataManager.Instance.OnCharacterSelected(playerIndex, charIndex);
     }
 }

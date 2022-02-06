@@ -25,21 +25,13 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
         if (players[index] != null) return;
         
         players[index] = Instantiate(playerDataTemplate);
-        players[index].playerIndex = index;
         playerCount++;
     }
 
-    public void OnCharacterSelected(int index, int charIndex, Vector3 assumedScale)
+    public void OnCharacterSelected(int index, int charIndex)
     {
         players[index].character = characters[charIndex];
         players[index].idleCharacter = idleCharacters[charIndex];
-        players[index].characterScale = assumedScale / 100f;
-
-        /*if (players.Count(p => p.character != null) >=
-            maxPlayerCount)
-        {
-            LevelManager.Instance.LoadNextScene();
-        }*/
     }
 
     public PlayerData SelectPlayer(int index) => players[index];
@@ -48,5 +40,9 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
         useIdle ? players[index].idleCharacter : players[index].character;
 
     public int GetPlayerScore(int index) => players[index].points;
-    public void UpdatePlayerScore(int index, int score) => players[index].points = score;
+
+    public void UpdatePlayerScore(int index, int score)
+    {
+        players[index].points += score;
+    }
 }

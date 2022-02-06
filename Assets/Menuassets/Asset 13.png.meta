@@ -121,10 +121,10 @@ TextureImporter:
         serializedVersion: 2
         x: 5
         y: 590
-        width: 574
-        height: 405
+        width: 568
+        height: 425
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -141,11 +141,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 613
-        y: 589
-        width: 567
-        height: 406
+        y: 590
+        width: 568
+        height: 425
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -164,9 +164,9 @@ TextureImporter:
         x: 4
         y: 157
         width: 568
-        height: 397
+        height: 425
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -183,11 +183,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 615
-        y: 154
+        y: 155
         width: 568
         height: 425
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -203,12 +203,12 @@ TextureImporter:
       name: Asset 13_4
       rect:
         serializedVersion: 2
-        x: 714
+        x: 567
         y: 3
         width: 130
         height: 118
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -224,12 +224,12 @@ TextureImporter:
       name: Asset 13_5
       rect:
         serializedVersion: 2
-        x: 863
+        x: 716
         y: 3
         width: 130
         height: 118
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -245,12 +245,12 @@ TextureImporter:
       name: Asset 13_6
       rect:
         serializedVersion: 2
-        x: 1007
+        x: 860
         y: 3
         width: 130
         height: 118
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -266,12 +266,12 @@ TextureImporter:
       name: Asset 13_7
       rect:
         serializedVersion: 2
-        x: 1152
+        x: 1004
         y: 3
-        width: 129
+        width: 130
         height: 118
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -279,6 +279,27 @@ TextureImporter:
       bones: []
       spriteID: 51ca77d5f2a3a634db15d0087ee490b2
       internalID: -350870472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 13_8
+      rect:
+        serializedVersion: 2
+        x: 1148
+        y: 3
+        width: 130
+        height: 119
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa41c8ade89bc1c40bcb8d990cdec062
+      internalID: -230339419
       vertices: []
       indices: 
       edges: []
@@ -295,6 +316,7 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       Asset 13_3: 544184320
+      Asset 13_8: -230339419
       Asset 13_5: -817598043
       Asset 13_7: -350870472
       Asset 13_6: -1799554022

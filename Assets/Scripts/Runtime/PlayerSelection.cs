@@ -1,13 +1,17 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class PlayerSelection : Selectable
 {
     [SerializeField] private PlayerSelectionManager manager;
+
+    [SerializeField] private int charId;
+    [SerializeField] private UnityEvent onSelect;
     
-    public void PlayerSelect(int playerIndex, Vector3 scale)
+    public void PlayerSelect(int playerIndex)
     {
-        manager.SelectCharacter(playerIndex, transform.GetSiblingIndex(), scale);
+        onSelect?.Invoke();
+        manager.SelectCharacter(playerIndex, charId);
     }
 }

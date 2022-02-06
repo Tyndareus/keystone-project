@@ -7,13 +7,13 @@ public class LevelManager : Singleton<LevelManager>
 
     private SceneObject currentScene;
 
-    public void LoadFirstScene()
+    public void ReturnToLobby()
     {
-        //Ensure the current scene "is" the main scene, even by number this should be fine.
+        currentScene = sceneData.mainScene;
         SceneData.currentScene = 0;
-        SceneManager.LoadScene(sceneData.selectionScene.scene);
-        /*loadOperation.allowSceneActivation = false;
-        loadOperation.completed += LoadSceneAsync;*/
+        TimerManager.InPlay = false;
+        
+        SceneManager.LoadScene(currentScene.scene);
     }
 
     public void LoadNextScene()

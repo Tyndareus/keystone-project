@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class Card : Selectable
 {
     [SerializeField] private Image image;
+    [SerializeField] private AudioSource clickSound;
+
     public CardData cardData { get; private set; }
     private CardManager cardManager;
 
@@ -28,7 +30,11 @@ public class Card : Selectable
         cardRotationSpeed = speed;
     }
 
-    public void Submit(int playerIndex) => cardManager.Select(playerIndex, this);
+    public void Submit(int playerIndex)
+    {
+        clickSound.Play();
+        cardManager.Select(playerIndex, this);
+    }
 
     public void Toggle(bool canInteract, bool matched = false)
     {

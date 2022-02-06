@@ -31,7 +31,7 @@ public class WorldPlayerManager : MonoBehaviour
 
         GameObject player = Instantiate(pd.character, pInput.transform, false);
         player.transform.position = new Vector3(0.0f, -0.5f, 0.0f);
-        player.transform.localScale = pd.characterScale;
+        player.transform.localScale /= 10.0f;
 
         pInput.transform.SetParent(characterSpawn, false);
 

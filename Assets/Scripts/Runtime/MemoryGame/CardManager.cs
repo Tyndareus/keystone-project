@@ -16,6 +16,9 @@ public class CardManager : MonoBehaviour
     [SerializeField] private GridLayoutGroup layout;
 
     [SerializeField] private FadeManager fadeManager;
+    [SerializeField] private ScoreManager scoreManager;
+    [SerializeField] private CanvasGroup worldScreen, canvasScreen;
+    [SerializeField] private AudioSource resultAudio;
 
     private List<CardData> selectedCards;
     private Card[] playerSelection;
@@ -33,7 +36,15 @@ public class CardManager : MonoBehaviour
         PaintCards();
     }
 
-    public void OnFadeIn() => StartCoroutine(PaintAndDisplay());
+    public void OnStart() => StartCoroutine(DisplayCards());
+
+    //Temp but cant be bothered thinking of a solution at this stage
+    public void Update()
+    {
+        canvasScreen.alpha = worldScreen.alpha;
+        canvasScreen.interactable = worldScreen.interactable;
+        canvasScreen.blocksRaycasts = worldScreen.blocksRaycasts;
+    }
 
     private void PopulateCards()
     {
@@ -103,7 +114,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    private IEnumerator PaintAndDisplay()
+    private IEnumerator DisplayCards()
     {
         for (float t = 0.0f; t <= cardDisplaySpeed; t += Time.deltaTime)
             yield return null;
@@ -128,11 +139,6 @@ public class CardManager : MonoBehaviour
         }
 
         canSelect = true;
-        
-        foreach (var uiPlayer in FindObjectsOfType<UIPlayerController>())
-        {
-            uiPlayer.EnableInput();
-        }
     }
 
     public void Select(int playerIndex, Card selectionCard)
@@ -174,9 +180,12 @@ public class CardManager : MonoBehaviour
         {
             playerSelection[index].Toggle(false, true);
             other.Toggle(false, true);
+
+            scoreManager.TryScore(true, true);
         }
         else
         {
+            resultAudio.Play();
             playerSelection[index].Toggle(true);
             playerSelection[index].Hide();
             other.Toggle(true);
@@ -193,9 +202,16 @@ public class CardManager : MonoBehaviour
     {
         if (GetComponentsInChildren<Card>().All(x => x.HasBeenCompleted()))
         {
-            fadeManager.FadeOut();
+            StartCoroutine(GoToFade());
         }
     }
 
-    public void OnFadeOut() => LevelManager.Instance.LoadNextScene();
+    private IEnumerator GoToFade()
+    {
+        FindObjectOfType<AudioManager>().OnGameComplete();
+        
+        for (float t = 0.0f; t <= 3.0f; t += Time.deltaTime) yield return null;
+
+        fadeManager.FadeOut();
+    }
 }

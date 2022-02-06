@@ -18,15 +18,16 @@ public class ConveyorPlayerController : MonoBehaviour
     private CapsuleCollider2D col;
     private Vector3 halfSize;
     private bool hitObject;
-    private int playerIndex;
+
+    private TimerManager timerManager;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<CapsuleCollider2D>();
         halfSize = new Vector3(0.0f, col.size.y / 2f);
-
-        playerIndex = GetComponent<PlayerInput>().playerIndex;
+        timerManager = FindObjectOfType<TimerManager>();
+        
     }
 
     private void FixedUpdate() => CheckGround();
@@ -48,11 +49,8 @@ public class ConveyorPlayerController : MonoBehaviour
 
         if (hitObject)
         {
-            FindObjectOfType<TimerManager>().ReduceTime(5.0f);
-        }
-        else if(isGrounded && !hitObject)
-        {
-            PlayerDataManager.Instance.UpdatePlayerScore(playerIndex, 1);
+            timerManager.ReduceTime(5.0f);
+            timerManager.PreventScore();
         }
 
         hitObject = false;

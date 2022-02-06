@@ -13,23 +13,63 @@ MonoBehaviour:
   m_Name: QuizData
   m_EditorClassIdentifier: 
   questions:
-  - question: Hello World
+  - question: How far can a rabbit turn their ears?
     options:
-    - text: World Hello
-      correctAnswer: 0
-    - text: olleH dlroW
-      correctAnswer: 0
-    - text: dlroW olleH
-      correctAnswer: 0
-    - text: Hello World
+    - text: 180 Degrees
       correctAnswer: 1
-  - question: Goodbye World
+    - text: 90 Degrees
+      correctAnswer: 0
+    - text: 270 Degrees
+      correctAnswer: 0
+    - text: 360 Degrees
+      correctAnswer: 0
+  - question: What are baby rabbits called?
     options:
-    - text: Goodbye World
+    - text: Kittens
       correctAnswer: 1
-    - text: eybdooG dlroW
+    - text: Pup
       correctAnswer: 0
-    - text: GoodWorld bye
+    - text: Joey
       correctAnswer: 0
-    - text: World byeGood
+    - text: Bun
+      correctAnswer: 0
+  - question: What age do dalmatians get their first spot?
+    options:
+    - text: 1 week old
+      correctAnswer: 1
+    - text: 2 weeks old
+      correctAnswer: 0
+    - text: 1 month old
+      correctAnswer: 0
+    - text: 2 months old
+      correctAnswer: 0
+  - question: Which animal is not nocturnal?
+    options:
+    - text: Hamster
+      correctAnswer: 1
+    - text: Rat
+      correctAnswer: 0
+    - text: Hedgehog
+      correctAnswer: 0
+    - text: Sugar glider
+      correctAnswer: 0
+  - question: How many stomachs does a horse have?
+    options:
+    - text: One
+      correctAnswer: 1
+    - text: Two
+      correctAnswer: 0
+    - text: Three
+      correctAnswer: 0
+    - text: Four
+      correctAnswer: 0
+  - question: How does a guinea pig show it is excited?
+    options:
+    - text: Popcorning
+      correctAnswer: 1
+    - text: Shaking head
+      correctAnswer: 0
+    - text: Smiles
+      correctAnswer: 0
+    - text: Circles
       correctAnswer: 0

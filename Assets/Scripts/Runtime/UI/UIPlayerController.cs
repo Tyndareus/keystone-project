@@ -12,27 +12,22 @@ public class UIPlayerController : MonoBehaviour
     [NonSerialized] public MultiplayerEventSystem playerEventSystem;
     [NonSerialized] public GraphicRaycaster uiRaycaster;
 
-    private bool hasSelected;
     private static readonly int Selected = Animator.StringToHash("Selected");
 
-    private GameObject previouslySelected;
+    private Selectable previouslySelected;
 
     private void Start()
     {
-        UpdateCaretPosition();
+        
     }
 
     public void Navigate(InputAction.CallbackContext ctx)
     {
-        if (hasSelected) return;
         
-        UpdateCaretPosition();
     }
 
     public void MouseNavigation(InputAction.CallbackContext ctx)
     {
-        if (hasSelected) return;
-        
         PointerEventData ped = new PointerEventData(playerEventSystem)
         {
             position = ctx.ReadValue<Vector2>()
@@ -70,21 +65,14 @@ public class UIPlayerController : MonoBehaviour
             
             playerEventSystem.SetSelectedGameObject(null);
         }
-
-        UpdateCaretPosition();
     }
 
     public void Submit(InputAction.CallbackContext ctx)
     {
-        if (hasSelected) return;
-
-        if (ctx.action.name == "Click" &&
-            ctx.performed)
+        if (ctx.action.name == "Click" && ctx.performed)
         {
             if(!ValidateClick()) return;
         }
-        
-        UpdateCaretPosition();
         
         PlayerInput pInput = GetComponent<PlayerInput>();
 
@@ -93,36 +81,7 @@ public class UIPlayerController : MonoBehaviour
 
         RectTransform st = playerEventSystem.currentSelectedGameObject.GetComponent<RectTransform>();
 
-        hasSelected = true;
-        st.GetComponent<Selectable>().interactable = false;
-
         ValidateFlow(pInput.playerIndex, st);
-    }
-
-    private void UpdateCaretPosition()
-    {
-        if (playerEventSystem == null) return;
-
-        if (playerEventSystem.currentSelectedGameObject == null) return;
-
-        RectTransform st = playerEventSystem.currentSelectedGameObject.GetComponent<RectTransform>();
-        
-        if (previouslySelected != null)
-        {
-            Animator previousAnim = previouslySelected.GetComponentInChildren<Animator>();
-            if (previousAnim != null)
-            {
-                previousAnim.SetBool(Selected, false);
-            }
-        }
-        
-        Animator currentAnim = st.gameObject.GetComponentInChildren<Animator>();
-        if (currentAnim != null)
-        {
-            currentAnim.SetBool(Selected, true);
-        }
-        
-        previouslySelected = st.gameObject;
     }
 
     private void ValidateFlow(int playerIndex, RectTransform rectTransform)
@@ -132,16 +91,20 @@ public class UIPlayerController : MonoBehaviour
         {
             case Card c:
                 c.Submit(playerIndex);
-                hasSelected = false;
                 return;
             case OptionButton ob:
                 ob.Submit(playerIndex);
-                hasSelected = false;
                 return;
             case PlayerSelection ps:
-                Animator anim = rectTransform.GetComponentInChildren<Animator>();
-                ps.PlayerSelect(playerIndex, anim.transform.localScale);
-                playerEventSystem.enabled = false;
+                if (previouslySelected != null)
+                {
+                    previouslySelected.interactable = true;
+                }
+                
+                ps.interactable = false;
+                ps.PlayerSelect(playerIndex);
+                
+                previouslySelected = selectable;
                 break;
         }
     }
@@ -158,7 +121,4 @@ public class UIPlayerController : MonoBehaviour
         uiRaycaster.Raycast(ped, results);
         return results.Any(result => result.gameObject == playerEventSystem.currentSelectedGameObject);
     }
-
-    public void DisableInput() => hasSelected = true;
-    public void EnableInput() => hasSelected = false;
 }
