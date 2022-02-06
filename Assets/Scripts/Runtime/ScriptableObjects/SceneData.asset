@@ -16,7 +16,9 @@ MonoBehaviour:
     scene: 0
   selectionScene:
     scene: 1
+  finalScene:
+    scene: 4
   sceneOrder:
-  - scene: 2
+  - scene: 1
   - scene: 3
-  - scene: 4
+  - scene: 2

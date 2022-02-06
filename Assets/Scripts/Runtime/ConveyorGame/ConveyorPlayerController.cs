@@ -17,12 +17,17 @@ public class ConveyorPlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private CapsuleCollider2D col;
     private Vector3 halfSize;
+    private bool hitObject;
+
+    private TimerManager timerManager;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<CapsuleCollider2D>();
         halfSize = new Vector3(0.0f, col.size.y / 2f);
+        timerManager = FindObjectOfType<TimerManager>();
+        
     }
 
     private void FixedUpdate() => CheckGround();
@@ -41,6 +46,14 @@ public class ConveyorPlayerController : MonoBehaviour
             canJump = true;
             currentJump = 0;
         }
+
+        if (hitObject)
+        {
+            timerManager.ReduceTime(5.0f);
+            timerManager.PreventScore();
+        }
+
+        hitObject = false;
     }
 
     public void OnJump(InputAction.CallbackContext ctx)
@@ -62,6 +75,6 @@ public class ConveyorPlayerController : MonoBehaviour
     {
         if (((1 << col.gameObject.layer) & groundLayer) != 0) return;
 
-        Debug.Log("Hit object");
+        hitObject = true;
     }
 }

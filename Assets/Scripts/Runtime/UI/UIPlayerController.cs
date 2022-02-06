@@ -1,79 +1,124 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 public class UIPlayerController : MonoBehaviour
 {
-    [NonSerialized] public GameObject playerOutlineObject;
     [NonSerialized] public MultiplayerEventSystem playerEventSystem;
+    [NonSerialized] public GraphicRaycaster uiRaycaster;
 
-    private bool hasSelected;
+    private static readonly int Selected = Animator.StringToHash("Selected");
+
+    private Selectable previouslySelected;
 
     private void Start()
     {
-        UpdateCaretPosition();
+        
     }
 
     public void Navigate(InputAction.CallbackContext ctx)
     {
-        if (hasSelected) return;
         
-        UpdateCaretPosition();
+    }
+
+    public void MouseNavigation(InputAction.CallbackContext ctx)
+    {
+        PointerEventData ped = new PointerEventData(playerEventSystem)
+        {
+            position = ctx.ReadValue<Vector2>()
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        GameObject hitResult = null;
+
+        if (uiRaycaster == null) return;
+        
+        uiRaycaster.Raycast(ped, results);
+        foreach (var result in results)
+        {
+            var selectable = result.gameObject.GetComponentInChildren<Selectable>();
+            if (selectable != null)
+            {
+                hitResult = result.gameObject;
+            }
+        }
+
+        if (hitResult != null)
+        {
+            playerEventSystem.SetSelectedGameObject(hitResult);
+        }
+        else
+        {
+            if (previouslySelected != null)
+            {
+                Animator previousAnim = previouslySelected.GetComponentInChildren<Animator>();
+                if (previousAnim != null)
+                {
+                    previousAnim.SetBool(Selected, false);
+                }
+            }
+            
+            playerEventSystem.SetSelectedGameObject(null);
+        }
     }
 
     public void Submit(InputAction.CallbackContext ctx)
     {
-        if (hasSelected) return;
-        
-        UpdateCaretPosition();
+        if (ctx.action.name == "Click" && ctx.performed)
+        {
+            if(!ValidateClick()) return;
+        }
         
         PlayerInput pInput = GetComponent<PlayerInput>();
 
-        RectTransform st = playerEventSystem.currentSelectedGameObject != null
-            ? playerEventSystem.currentSelectedGameObject.GetComponent<RectTransform>()
-            : playerEventSystem.firstSelectedGameObject.GetComponent<RectTransform>();
+        if (playerEventSystem == null) return;
+        if (playerEventSystem.currentSelectedGameObject == null) return;
 
-        hasSelected = true;
-        st.GetComponent<Selectable>().interactable = false;
+        RectTransform st = playerEventSystem.currentSelectedGameObject.GetComponent<RectTransform>();
 
         ValidateFlow(pInput.playerIndex, st);
     }
 
-    private void UpdateCaretPosition()
+    private void ValidateFlow(int playerIndex, RectTransform rectTransform)
     {
-        if (playerOutlineObject == null) return;
-        
-        RectTransform rt = playerOutlineObject.GetComponent<RectTransform>();
-        RectTransform st = playerEventSystem.currentSelectedGameObject != null
-            ? playerEventSystem.currentSelectedGameObject.GetComponent<RectTransform>()
-            : playerEventSystem.firstSelectedGameObject.GetComponent<RectTransform>();
-
-        if (st.gameObject.GetComponent<Selectable>().IsInteractable())
+        Selectable selectable = rectTransform.GetComponentInChildren<Selectable>();
+        switch (selectable)
         {
-            rt.anchoredPosition = st.anchoredPosition;
+            case Card c:
+                c.Submit(playerIndex);
+                return;
+            case OptionButton ob:
+                ob.Submit(playerIndex);
+                return;
+            case PlayerSelection ps:
+                if (previouslySelected != null)
+                {
+                    previouslySelected.interactable = true;
+                }
+                
+                ps.interactable = false;
+                ps.PlayerSelect(playerIndex);
+                
+                previouslySelected = selectable;
+                break;
         }
     }
 
-    private void ValidateFlow(int playerIndex, RectTransform rectTransform)
+    private bool ValidateClick()
     {
-        Card card = rectTransform.GetComponent<Card>();
-        if (card != null)
+        //There won't be more than one mouse... surely
+        PointerEventData ped = new PointerEventData(playerEventSystem)
         {
-            card.Submit(playerIndex);
-            return;
-        }
+            position = Mouse.current.position.ReadValue()
+        };
 
-        OptionButton opt = rectTransform.GetComponent<OptionButton>();
-        if (opt != null)
-        {
-            opt.Submit(playerIndex);
-            return;
-        }
-
-        Image img = rectTransform.GetComponent<Image>();
-        PlayerDataManager.Instance.OnCharacterSelected(playerIndex, img.sprite);
-        playerEventSystem.enabled = false;
+        List<RaycastResult> results = new List<RaycastResult>();
+        uiRaycaster.Raycast(ped, results);
+        return results.Any(result => result.gameObject == playerEventSystem.currentSelectedGameObject);
     }
 }

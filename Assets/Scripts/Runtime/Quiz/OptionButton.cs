@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class OptionButton : Selectable
 {
     public QuizManager quizManager;
-    private string option;
+    private QuizData.OptionData opt;
     private int optionIndex;
 
     private TMP_Text optionText;
@@ -14,25 +14,17 @@ public class OptionButton : Selectable
     protected override void Start()
     {
         optionText = GetComponentInChildren<TMP_Text>();
-
-        optionText.text = option;
+        optionText.text = opt.text;
     }
-
-    public void UpdateStateValues(Transition state, ColorBlock color, SpriteState sprite)
+    
+    public void UpdateOption(QuizData.OptionData data, int index)
     {
-        transition = state;
-        colors = color;
-        spriteState = sprite;
-    }
-
-    public void UpdateOption(string opt, int id)
-    {
-        option = opt;
-        optionIndex = id;
+        opt = data;
+        optionIndex = index;
 
         if (optionText == null) return;
         
-        optionText.text = option;
+        optionText.text = data.text;
     }
 
     public void Submit(int playerIndex)

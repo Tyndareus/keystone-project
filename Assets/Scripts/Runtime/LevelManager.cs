@@ -7,22 +7,24 @@ public class LevelManager : Singleton<LevelManager>
 
     private SceneObject currentScene;
 
-    public void LoadFirstScene()
+    public void ReturnToLobby()
     {
-        //Ensure the current scene "is" the main scene, even by number this should be fine.
+        currentScene = sceneData.mainScene;
         SceneData.currentScene = 0;
-        SceneManager.LoadScene(sceneData.selectionScene.scene);
-        /*loadOperation.allowSceneActivation = false;
-        loadOperation.completed += LoadSceneAsync;*/
+        TimerManager.InPlay = false;
+        
+        SceneManager.LoadScene(currentScene.scene);
     }
 
     public void LoadNextScene()
     {
-        if (SceneData.currentScene + 1 >= sceneData.sceneOrder.Count) return;
+        if (SceneData.currentScene > sceneData.sceneOrder.Count - 1)
+        {
+            SceneManager.LoadScene(sceneData.finalScene.scene);
+            return;
+        }
 
         currentScene = sceneData.sceneOrder[SceneData.currentScene++];
         SceneManager.LoadScene(currentScene.scene);
     }
-
-    public SceneObject GetScene() => currentScene;
 }

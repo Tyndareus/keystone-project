@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
@@ -10,12 +7,9 @@ public class OptionsMenu : MonoBehaviour
     public enum ColorBlindModes
     {
         None,
-        Protanomaly,
         Protanopia,
-        Deuteranomaly,
         Deuteranopia,
         Tritanopia,
-        Tritanomaly,
         Achromatopsia
     }
 

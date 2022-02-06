@@ -1,13 +1,23 @@
+using System;
+using System.Collections;
 using UnityEditor;
 using UnityEngine;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private LevelManager levelManager;
-    [SerializeField] private GameObject mainMenuButtons;
-    [SerializeField] private GameObject optionMenu;
+    [SerializeField] private FadeManager fadeManager, altFade;
 
-    public void OnPlayClick() => levelManager.LoadFirstScene();
+    private void Awake()
+    {
+        Application.targetFrameRate = 60;
+        StartCoroutine(DelayIntroScreen());
+    }
+
+    public void OnPlayClick()
+    {
+        FindObjectOfType<AudioManager>().FadeOut();
+        fadeManager.FadeOut();
+    }
 
     public void OnQuitClick()
     {
@@ -18,15 +28,15 @@ public class MainMenu : MonoBehaviour
 #endif
     }
 
-    public void OnOptionsClicked()
+    public void OnFadeOut()
     {
-        mainMenuButtons.SetActive(false);
-        optionMenu.SetActive(true);
+        LevelManager.Instance.LoadNextScene();
     }
-    
-    public void OnBackClicked()
+
+    private IEnumerator DelayIntroScreen()
     {
-        optionMenu.SetActive(false);
-        mainMenuButtons.SetActive(true);
+        for (float t = 0.0f; t <= 3.0f; t += Time.deltaTime) yield return null;
+        
+        altFade.FadeIn();
     }
 }
